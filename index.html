@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Confetti Love Manila — Attendance Login</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<style>
+   
+</style>
+
+<body class="centered-page ">
+    <div class="card login-card">
+        <img src="bg.jpg" alt="Confetti Love Manila" class="brand-logo" />
+
+        <form id="loginForm" class="form">
+            <label for="fullname">Full name</label>
+            <input id="fullname" name="fullname" type="text" placeholder="e.g. Shiela Marie" required />
+
+            <label for="role">Role</label>
+            <select id="role" name="role">
+                <option value="employee">Employee</option>
+                <option value="employer">Employer (Boss)</option>
+            </select>
+
+            <div class="row-between">
+                <button type="submit" class="btn primary">Login</button>
+                <button type="button" id="demoBtn" class="btn ghost">Demo user</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function redirectByRole(role) {
+            if (role === 'employee') {
+                location.href = 'employee-dashboard.html';
+            } else {
+                location.href = 'employer-dashboard.html';
+            }
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const name = document.getElementById('fullname').value.trim();
+            const role = document.getElementById('role').value;
+            if (!name) return alert('Enter your full name');
+            localStorage.setItem('attendance_user', JSON.stringify({ fullname: name, role }));
+            redirectByRole(role);
+        });
+
+        document.getElementById('demoBtn').addEventListener('click', function () {
+            const demoUser = { fullname: 'Demo Employee', role: 'employee' };
+            localStorage.setItem('attendance_user', JSON.stringify(demoUser));
+            redirectByRole(demoUser.role);
+        });
+    </script>
+</body>
+
+</html>

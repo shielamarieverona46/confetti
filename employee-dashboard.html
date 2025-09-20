@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Employee Dashboard — Confetti Love Manila</title>
+    <link rel="stylesheet" href="styles.css" />
+<style>
+   /* 🌸 THEME COLORS */
+:root {
+  --green: #5AC8A6;
+  --purple: #B28DFF;
+  --pink: #FF9EC9;
+  --blue: #89CFF0;
+  --yellow: #FFC857;
+  --muted: #6b7280;
+  --card: #fff;
+  --radius: 16px;
+  --shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  font-family: 'Poppins', sans-serif;
+}
+
+/* 🌸 GENERAL */
+body {
+  margin: 0;
+  background: var(--pink);
+  color: #333;
+  line-height: 1.5;
+}
+
+.pastel-bg {
+  background: linear-gradient(180deg, #fff 0%, #FDF7FF 100%);
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* 🌸 HEADER */
+.topbar {
+  background: var(--pink);
+  padding: 12px 20px;
+  box-shadow: var(--shadow);
+}
+
+.topbar .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand-logo-small {
+  width: 120px;
+  border-radius: 50%;
+}
+
+/* 🌸 CARDS */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--shadow);
+  margin: 20px 0;
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+/* 🌸 BUTTONS */
+.btn {
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn.primary { background: var(--yellow); }
+.btn.secondary { background: var(--green); color: #fff; }
+.btn.ghost { background: var(--purple); color: #fff; }
+
+.btn:hover {
+  opacity: 0.9;
+  transform: scale(1.03);
+}
+
+/* 🌸 FORMS */
+.actions input {
+  padding: 10px;
+  border-radius: 8px;
+  border: 2px solid var(--blue);
+  font-size: 14px;
+  margin: 4px 6px 10px 0;
+  width: 180px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* 🌸 TABLE */
+.att-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.att-table th {
+  background: var(--blue);
+  color: #fff;
+  padding: 12px;
+  text-align: left;
+  border-radius: 8px 8px 0 0;
+  font-weight: 600;
+}
+
+.att-table td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.att-table tbody tr:nth-child(even) {
+  background: #f9f9ff;
+}
+
+.editable-cell {
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.editable-cell:hover {
+  background: #fff7d1;
+}
+
+/* 🌸 INLINE EDITOR */
+textarea.inline-editor {
+  width: 100%;
+  padding: 6px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-family: inherit;
+}
+
+.editor-actions {
+  margin-top: 6px;
+  display: flex;
+  gap: 8px;
+}
+
+/* 🌸 TEXT */
+h3 {
+  margin-top: 0;
+  color: var(--purple);
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 14px;
+  margin-top: 12px;
+}
+
+/* 🌸 RESPONSIVE */
+@media (max-width: 768px) {
+  .actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .actions input {
+    width: 100%;
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  .att-table th, .att-table td {
+    font-size: 13px;
+    padding: 8px;
+  }
+}
+
+
+</style>
+</head>
+
+<body class="pastel-bg">
+    <header class="topbar">
+        <div class="container">
+            <img src="bg.jpg" alt="Confetti Love Manila" class="brand-logo-small" />
+            <div class="user-area">
+                <div id="welcome">Welcome</div>
+                <button id="logoutBtn" class="btn ghost">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="card">
+            <h3>➕ Add Attendance Record</h3>
+            <div class="actions">
+                <input type="date" id="recordDate" />
+                <input type="time" id="timeIn" placeholder="Time In" />
+                <input type="time" id="timeOut" placeholder="Time Out" />
+                <input type="text" id="jobDesc" placeholder="Job Description" />
+                <button id="addRecord" class="btn primary">Add Record</button>
+                <button id="clearBtn" class="btn ghost">Clear Records</button>
+            </div>
+        </section>
+
+        <section class="card">
+            <h3>📋 My Attendance</h3>
+            <table id="attTable" class="att-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Date</th>
+                        <th>Job Description</th>
+                        <th>Time In</th>
+                        <th>Time Out</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <p id="noRecords" class="muted">No attendance recorded yet.</p>
+        </section>
+    </main>
+
+    <script>
+        // helpers
+        function escapeHtml(str) {
+            if (str == null) return '';
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+        function uid() {
+            return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+        }
+
+        // storage helpers
+        function loadUser() {
+            const raw = localStorage.getItem('attendance_user');
+            if (!raw) { location.href = 'index.html'; return null; }
+            return JSON.parse(raw);
+        }
+        function recordsKey(name) {
+            return 'records_' + name.replace(/\s+/g, '_').toLowerCase();
+        }
+        function loadRecords(name) {
+            return JSON.parse(localStorage.getItem(recordsKey(name))) || [];
+        }
+        function saveRecords(name, records) {
+            localStorage.setItem(recordsKey(name), JSON.stringify(records));
+        }
+
+        // render
+        function renderTable(records) {
+            const tbody = document.querySelector('#attTable tbody');
+            tbody.innerHTML = '';
+            if (!records.length) {
+                document.getElementById('noRecords').style.display = 'block';
+                document.getElementById('attTable').style.display = 'none';
+                return;
+            }
+            document.getElementById('noRecords').style.display = 'none';
+            document.getElementById('attTable').style.display = 'table';
+
+            // group by date (sorted descending newest first)
+            const grouped = {};
+            records.forEach(r => {
+                if (!grouped[r.date]) grouped[r.date] = [];
+                grouped[r.date].push(r);
+            });
+
+            // sort dates descending (most recent first). Change to ascending if you prefer
+            const dates = Object.keys(grouped).sort((a, b) => new Date(b) - new Date(a));
+
+            let count = 1;
+            for (const date of dates) {
+                const dayRecords = grouped[date];
+                // sort sessions by timeIn (lexicographic OK for HH:MM:SS or HH:MM)
+                dayRecords.sort((a, b) => (a.timeIn || '') > (b.timeIn || '') ? 1 : -1);
+
+                const tr = document.createElement('tr');
+
+                // escape content to avoid raw HTML being interpreted
+                const descs = dayRecords.map(r => escapeHtml(r.description || '-')).join('<br>');
+                const timesIn = dayRecords.map(r => escapeHtml(r.timeIn || '-')).join('<br>');
+                const timesOut = dayRecords.map(r => escapeHtml(r.timeOut || '-')).join('<br>');
+
+                tr.innerHTML = `
+                    <td>${count++}</td>
+                    <td>${escapeHtml(date)}</td>
+                    <td class="editable-cell" data-field="description">${descs}</td>
+                    <td class="editable-cell" data-field="timeIn">${timesIn}</td>
+                    <td class="editable-cell" data-field="timeOut">${timesOut}</td>
+                `;
+                tbody.appendChild(tr);
+
+                // attach edit handlers (capture dayRecords reference)
+                const descCell = tr.children[2];
+                const inCell = tr.children[3];
+                const outCell = tr.children[4];
+
+                descCell.addEventListener('click', () => openEditor(descCell, dayRecords, 'description'));
+                inCell.addEventListener('click', () => openEditor(inCell, dayRecords, 'timeIn'));
+                outCell.addEventListener('click', () => openEditor(outCell, dayRecords, 'timeOut'));
+            }
+        }
+
+        // open editor inside the cell (textarea + Save/Cancel)
+        function openEditor(cell, dayRecords, field) {
+            // prevent multiple editors
+            if (cell.querySelector('.inline-editor')) return;
+
+            // get current text lines (convert <br> to \n)
+            const currentHtml = cell.innerHTML;
+            const currentText = currentHtml.replace(/<br\s*\/?>/gi, '\n').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+            const textarea = document.createElement('textarea');
+            textarea.className = 'inline-editor';
+            textarea.value = currentText;
+            textarea.rows = Math.max(3, dayRecords.length);
+
+            const actions = document.createElement('div');
+            actions.className = 'editor-actions';
+
+            const saveBtn = document.createElement('button');
+            saveBtn.type = 'button';
+            saveBtn.textContent = 'Save';
+            saveBtn.className = 'btn primary';
+
+            const cancelBtn = document.createElement('button');
+            cancelBtn.type = 'button';
+            cancelBtn.textContent = 'Cancel';
+            cancelBtn.className = 'btn ghost';
+
+            actions.appendChild(saveBtn);
+            actions.appendChild(cancelBtn);
+
+            // clear cell and append editor
+            cell.innerHTML = '';
+            cell.appendChild(textarea);
+            cell.appendChild(actions);
+            textarea.focus();
+
+            // save behavior
+            saveBtn.addEventListener('click', () => {
+                // lines may be fewer/greater than sessions -> map by index
+                const lines = textarea.value.split('\n');
+                // update in-memory dayRecords
+                for (let i = 0; i < dayRecords.length; i++) {
+                    dayRecords[i][field] = (lines[i] !== undefined) ? lines[i].trim() : (dayRecords[i][field] || '');
+                }
+
+                // persist updates to localStorage by id
+                const key = recordsKey(user.fullname);
+                let recs = JSON.parse(localStorage.getItem(key)) || [];
+                // for each dayRecords record, find by id and update field
+                dayRecords.forEach(dr => {
+                    const idx = recs.findIndex(r => r.id === dr.id);
+                    if (idx !== -1) {
+                        recs[idx][field] = dr[field];
+                    }
+                });
+                localStorage.setItem(key, JSON.stringify(recs));
+
+                // re-render using updated data
+                records = loadRecords(user.fullname);
+                renderTable(records);
+            });
+
+            // cancel behavior - restore original display (no save)
+            cancelBtn.addEventListener('click', () => {
+                // simply re-render to restore original cell content
+                renderTable(records);
+            });
+        }
+
+        // bootstrap
+        const user = loadUser();
+        if (user.role !== 'employee') location.href = 'employer-dashboard.html';
+        document.getElementById('welcome').textContent = `${user.fullname} (Employee)`;
+
+        // initial records
+        let records = loadRecords(user.fullname);
+        // ensure older records (if any) have id and fullname (fix migrated data)
+        let fixed = false;
+        records = records.map(r => {
+            if (!r.id) { r.id = uid(); fixed = true; }
+            if (!r.fullname) { r.fullname = user.fullname; fixed = true; }
+            return r;
+        });
+        if (fixed) saveRecords(user.fullname, records);
+
+        renderTable(records);
+
+        // Add Record
+        document.getElementById('addRecord').addEventListener('click', () => {
+            const date = document.getElementById('recordDate').value;
+            const timeIn = document.getElementById('timeIn').value;
+            const timeOut = document.getElementById('timeOut').value;
+            const desc = document.getElementById('jobDesc').value.trim();
+
+            if (!date || !timeIn || !desc) {
+                return alert('Date, Time In, and Job Description are required.');
+            }
+
+            const newRec = {
+                id: uid(),
+                date,
+                timeIn,
+                timeOut: timeOut || '',
+                description: desc,
+                fullname: user.fullname
+            };
+            records.push(newRec);
+            saveRecords(user.fullname, records);
+            renderTable(records);
+
+            // Clear inputs
+            document.getElementById('recordDate').value = '';
+            document.getElementById('timeIn').value = '';
+            document.getElementById('timeOut').value = '';
+            document.getElementById('jobDesc').value = '';
+        });
+
+        // Clear Records
+        document.getElementById('clearBtn').addEventListener('click', () => {
+            if (!confirm('Clear all records?')) return;
+            records = [];
+            saveRecords(user.fullname, records);
+            renderTable(records);
+        });
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('attendance_user');
+            location.href = 'index.html';
+        });
+    </script>
+</body>
+
+</html>
